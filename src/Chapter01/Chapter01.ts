@@ -63,12 +63,12 @@ function normalize(v: Vector3D) {
 console.log(normalize({ x: 3, y: 4, z: 5 }));
 
 function calculateLengthL1(v: Vector3D) {
-  let length = 0;
+  const length = 0;
   for (const axis of Object.keys(v)) {
-    const coord = v[axis];
+    // const coord = v[axis];
     // ~~~~~~~ Element implicitly has an 'any' type because ...
     // 'string' can't be used to index type 'Vector3D'
-    length += Math.abs(coord);
+    // length += Math.abs(coord);
   }
   return length;
 }
