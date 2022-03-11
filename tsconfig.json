@@ -3,6 +3,8 @@
     "target": "es2015",
     "module": "CommonJS",
     "strict": true,
+    "rootDir": "src",
+    "outDir": "build"
   },
   "exclude": [
     "node_modules"
