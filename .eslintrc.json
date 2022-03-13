@@ -38,7 +38,8 @@
       "no-restricted-syntax":"off",
       "no-underscore-dangle":"off",
       "no-plusplus": "off",
-      "max-classes-per-file": "off"
+      "max-classes-per-file": "off",
+      "no-new-wrappers": "off"
   },
   "overrides": [
       {
