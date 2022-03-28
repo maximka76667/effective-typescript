@@ -1,4 +1,5 @@
 // Item 6: Use Your Editor to Interrogate and Explore the Type System
+
 function getElement(elOrId: string | HTMLElement | null): HTMLElement {
   if (elOrId === null) {
     elOrId;

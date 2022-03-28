@@ -1,3 +1,5 @@
+// Item 10: Avoid Object Wrapper Types (String, Number, Boolean, Symbol, BigInt)
+
 // Primitives are distinguished from objects by being immutable and not having meth‐
 // ods. You might object that strings do have methods:
 
@@ -18,7 +20,7 @@ new String("hello") === new String("hello"); // false
 // The implicit conversion to object wrapper types explains an odd phenomenon in
 // JavaScript—if you assign a property to a primitive, it disappears:
 
-const x = "hello";
+let x = "hello";
 x.language = "English"; // 'English'
 x.language; // undefined
 
