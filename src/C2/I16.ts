@@ -105,3 +105,24 @@ for (let i = 0; i < xs.length; i++) {
 // If you truly want to accept tuples of any length or any array-like construct, TypeScript
 // has an ArrayLike type you can use:
 
+function checkedAccess<T>(xs: ArrayLike<T>, i: number): T {
+  if (i < xs.length) {
+    return xs[i];
+  }
+  throw new Error(`Attempt to access ${i} which is past end of array.`);
+}
+
+const tupleLike: ArrayLike<string> = {
+  "0": "A",
+  "1": "B",
+  length: 2,
+}; // OK
+
+// Things to Remember
+
+// • Understand that arrays are objects, so their keys are strings, not numbers. number
+// as an index signature is a purely TypeScript construct which is designed to help
+// catch bugs.
+
+// Prefer Array, tuple, or ArrayLike types to using number in an index signature
+// yourself.
