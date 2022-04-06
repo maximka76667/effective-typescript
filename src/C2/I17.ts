@@ -230,3 +230,69 @@ function parseTaggedText(lines: string[]): string[][] {
 
 // Since you’re assigning currPara to a new array in the very next statement, this doesn’t
 // seem like the most offensive assertion.
+
+// An important caveat to readonly is that it is shallow. You saw this with readonly
+// string[][] earlier. If you have a readonly array of objects, the objects themselves are
+// not readonly:
+
+const dates: readonly Date[] = [new Date()];
+dates.push(new Date());
+// ~~~~ Property 'push' does not exist on type 'readonly Date[]'
+dates[0].setFullYear(2037); // OK
+
+// Similar considerations apply to readonly’s cousin for objects, the Readonly generic:
+
+interface Outer {
+  inner: {
+    x: number,
+  }
+}
+
+const o: Readonly<Outer> = { inner: { x: 0 } };
+
+o.inner = { x: 2 };
+// Cannot assign to 'inner' because it is a read-only property.
+
+o.inner.x = 5; // OK
+
+type ReadonlyType = Readonly<Outer>;
+// type ReadonlyType = {
+//   readonly inner: {
+//       x: number;
+//   };
+// }
+
+// The important thing to note is the readonly modifier on inner but not on x. There is
+// no built-in support for deep readonly types at the time of this writing, but it is possible
+// to create a generic to do this. Getting this right is tricky, so I recommend using a
+// library rather than rolling your own. The DeepReadonly generic in ts-essentials is
+// one implementation.
+
+type DeepReadonlyType = DeepReadonly<Outer>;
+
+// You can also write readonly on an index signature. This has the effect of preventing
+// writes but allowing reads:
+
+let bills: { readonly [consumption: string]: number } = {};
+
+bills.light = 200;
+// Index signature in type '{ readonly [consumption: string]: number; }' only permits reading.
+
+bills = { ...bills, electricity: 1000 }; // OK
+bills = { ...bills, gas: 800 };
+
+// This can prevent issues with aliasing and mutation involving objects rather than
+// arrays.
+
+// Things to Remember
+
+// • If your function does not modify its parameters then declare them readonly.
+// This makes its contract clearer and prevents inadvertent mutations in its
+// implementation.
+
+// • Use readonly to prevent errors with mutation and to find the places in your code
+// where mutations occur.
+
+// • Understand the difference between const and readonly.
+
+// • Understand that readonly is shallow.
