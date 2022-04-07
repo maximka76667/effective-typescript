@@ -70,7 +70,7 @@ function shouldUpdateFailOpen(
 
 // If you set it up the right way, it can. The key is to use a mapped type and an object:
 
-const REQUIERES_UPDATE: { [prop in keyof ScatterProps]: boolean } = {
+const REQUIRES_UPDATE: { [prop in keyof ScatterProps]: boolean } = {
   xs: true,
   xy: true,
   xRange: true,
@@ -78,3 +78,50 @@ const REQUIERES_UPDATE: { [prop in keyof ScatterProps]: boolean } = {
   color: true,
   onClick: false,
 };
+
+function shouldUpdateWithMappedType(
+  oldProps: ScatterProps,
+  newProps: ScatterProps,
+) {
+  let key: keyof ScatterProps;
+  for (key in oldProps) {
+    if (oldProps[key] !== newProps[key] && REQUIRES_UPDATE[key]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// The [k in keyof ScatterProps] tells the type checker that REQUIRES_UPDATES
+// should have all the same properties as ScatterProps. If future you adds a new prop‐
+// erty to ScatterProps:
+
+interface ScatterProps {
+  onDoubleClick: () => void,
+}
+
+// Then this will produce an error in the definition of REQUIRES_UPDATE:
+
+// This will certainly force the issue! Deleting or renaming a property will cause a simi‐
+// lar error.
+
+// It’s important that we used an object with boolean values here. Had we used an array:
+
+const PROPS_REQUIRING_UPDATE: (keyof ScatterProps)[] = [
+  "xs",
+  "xy",
+  // ...
+];
+
+// then we would have been forced into the same fail open/fail closed choice.
+
+// Mapped types are ideal if you want one object to have exactly the same properties as
+// another. As in this example, you can use this to make TypeScript enforce constraints
+// on your code.
+
+// Things to Remember
+
+// • Use mapped types to keep related values and types synchronized.
+
+// • Consider using mapped types to force choices when adding new properties to an
+// interface.
