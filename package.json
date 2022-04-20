@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "npx eslint .",
     "ts": "tsc -w"
   },
   "keywords": [],
