@@ -75,3 +75,28 @@ const president = { ...presidentName, ...(hasMiddle ? { middle: "S" } : {}) };
 // Type is { middle?: string | undefined; first: string;last: string; }
 
 president.middle;
+
+// If you’re conditionally adding multiple properties, the union does more accurately
+// represent the set of possible values(Item 32).But an optional field would be easier to
+// work with.You can get one with a helper:
+
+function addOptional<
+  T extends object, U extends object
+>(a: T, b: U | null): T & Partial<U> {
+  return { ...a, ...b };
+}
+
+const president2 = addOptional(presidentName, hasMiddle ? { middle: "S" } : null);
+president2.middle; // OK, type is string | undefined
+president2.first; // OK
+
+// Sometimes you want to build an object or array by transforming another one. In this
+// case the equivalent of “building objects all at once” is using built-in functional con‐
+// structs or utility libraries like Lodash rather than loops. See Item 27 for more on this
+
+// Things to Remember
+
+// • Prefer to build objects all at once rather than piecemeal. Use object spread
+// ({...a, ...b}) to add properties in a type-safe way.
+
+// • Know how to conditionally add properties to an object.
