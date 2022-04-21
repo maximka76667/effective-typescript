@@ -117,3 +117,43 @@ function getElementContent(el: HTMLElement) {
 // This is known as a “user-defined type guard.” The el is HTMLInputElement as a
 // return type tells the type checker that it can narrow the type of the parameter if the
 // function returns true.
+
+// Some functions are able to use type guards to perform type narrowing across arrays
+// or objects. If you do some lookups in an array, for instance, you may wind up with an
+// array of nullable types:
+
+const michael5 = ["Jackie", "Tito", "Jermaine", "Marlon", "Michael"];
+const members = ["Janet", "Michael"].map(
+  (who) => michael5.find((n) => n === who),
+); // Type is (string | undefined)[]
+
+// If you filter out the undefined values using filter, TypeScript isn’t able to follow
+// along:
+
+const members2 = ["Janet", "Michael"].map(
+  (who) => michael5.find((n) => n === who),
+).filter((who) => who !== undefined); // Type is (string | undefined)[]
+
+// But if you use a type guard, it can:
+function isDefined<T>(x: T | undefined): x is T {
+  return x !== undefined;
+}
+
+const members3 = ["Maxim", "Michael"].map(
+  (who) => michael5.find((m) => m === who),
+).filter(isDefined); // Type is string[]
+
+// As always, inspecting types in your editor is key to building an intuition for how narrowing
+// works.
+
+// Understanding how types in TypeScript narrow will help you build an intuition for
+// how type inference works, make sense of errors, and generally have a more productive
+// relationship with the type checker.
+
+// Things to Remember
+
+// • Understand how TypeScript narrows types based on conditionals and other types
+// of control flow.
+
+// • Use tagged/discriminated unions and user-defined type guards to help the process
+// of narrowing.
