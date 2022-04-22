@@ -46,7 +46,8 @@
             {
                 "SwitchCase": 1
             }
-        ]
+        ],
+        "prefer-const": 0
     },
     "overrides": [
         {
