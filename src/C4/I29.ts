@@ -67,4 +67,3 @@ function focusOnFeature(f: Feature) {
 // Bounds indicates that it is liberal not just in what it accepts but also in what it produces.
 // The only type-safe way to use the camera result is to introduce a code branch
 // for each component of the union type (Item 22).
-
