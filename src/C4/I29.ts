@@ -67,3 +67,73 @@ function focusOnFeature(f: Feature) {
 // Bounds indicates that it is liberal not just in what it accepts but also in what it produces.
 // The only type-safe way to use the camera result is to introduce a code branch
 // for each component of the union type (Item 22).
+
+// The return type with lots of optional properties and union types makes viewportFor
+// Bounds difficult to use. Its broad parameter type is convenient, but its broad return
+// type is not. A more convenient API would be strict in what it produces.
+
+interface LngLat { lng: number, lat: number }
+type LngLatLike = LngLat | { lon: number, lat: number } | [number, number];
+
+interface Camera {
+  center: LngLat,
+  zoom: number,
+  bearing: number,
+  pitch: number
+}
+
+interface CameraOptions extends Omit<Partial<Camera>, "center"> {
+  center?: LngLatLike;
+}
+
+type LngLatBounds =
+  { northeast: LngLatLike, southwest: LngLatLike } |
+  [LngLatLike, LngLatLike] |
+  [number, number, number, number];
+
+declare function setCamera(camera: CameraOptions): void;
+declare function viewportForBounds2(bounds: LngLatBounds): Camera;
+
+// The loose CameraOptions type adapts the stricter Camera type (Item 14).
+
+// Using Partial<Camera> as the parameter type in setCamera would not work here
+// since you do want to allow LngLatLike objects for the center property. And you can’t
+// write "CameraOptions extends Partial<Camera>" since LngLatLike is a superset of
+// LngLat, not a subset (Item 7). If this seems too complicated, you could also write the
+// type out explicitly at the cost of some repetition:
+
+interface CameraOptions {
+  center?: LngLatLike,
+  zoom?: number,
+  bearing?: number,
+  pitch?: number
+}
+
+// In either case, with these new type declarations the focusOnFeature function passes
+// the type checker:
+
+function focusOnFeature(f: Feature) {
+  const bounds = calculateBoundingBox(f);
+  const camera = viewportForBounds2(bounds);
+  setCamera(camera);
+  const { center: { lat, lng }, zoom } = camera;
+  zoom; // Type is number
+  window.location.search = `?v=@${lat},${lng}z${zoom}`;
+}
+
+// This time the type of zoom is number, rather than number|undefined. The viewport
+// ForBounds function is now much easier to use. If there were any other functions that
+// produced bounds, you would also need to introduce a canonical form and a distinction
+// between LngLatBounds and LngLatBoundsLike.
+
+// Is allowing 19 possible forms of bounding box a good design? Perhaps not. But if
+// you’re writing type declarations for a library that does this, you need to model its
+// behavior. Just don’t have 19 return types!
+
+// Things to Remember
+
+// • Input types tend to be broader than output types. Optional properties and union
+// types are more common in parameter types than return types.
+
+// • To reuse types between parameters and return types, introduce a canonical form
+// (for return types) and a looser form (for parameters).
